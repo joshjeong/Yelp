@@ -15,7 +15,7 @@ class Business: Mappable {
     var displayPhone: String?
     var location: NSDictionary?
     var addressString: String?
-    var distance: String?
+    var distance: Float?
     var distanceMiles: String?
     var id: String?
     var imageURL: URL?
@@ -65,6 +65,8 @@ class Business: Mappable {
         snippetText        <- map["snippet_text"]
         url                <- (map["url"], URLTransform())
         
+        
+        print(map.JSON)
         setCategoryString(categoriesArray: categories)
         setDistance(distanceMeters: distance)
         setAddressString(locationDictionary: location)
@@ -88,10 +90,10 @@ class Business: Mappable {
         self.categoriesString = categoryString
     }
     
-    func setDistance(distanceMeters: String?) {
+    func setDistance(distanceMeters: Float?) {
         if let distanceMeters = distanceMeters {
             let milesPerMeter = 0.000621371
-            distanceMiles = String(format: "%.2f mi", milesPerMeter * Double(distanceMeters)!)
+            distanceMiles = String(format: "%.2f mi", milesPerMeter * Double(distanceMeters))
         } else {
             distanceMiles = ""
         }
