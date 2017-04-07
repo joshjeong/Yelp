@@ -21,7 +21,6 @@ class BusinessesViewController: UIViewController {
             if let businesses = businesses {
                 for business in businesses {
 //                    print("============")
-//                    print(business)
                 }
             }
             
