@@ -17,13 +17,13 @@ class FiltersViewController: UIViewController, FiltersViewControllerDelegate {
     @IBOutlet weak var tableView: UITableView!
     
     weak var delegate: FiltersViewControllerDelegate?
-    var categories = [[String:String]]()
+    var foodCategories = [[String:String]]()
     var switchSates = [Int:Bool]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        categories = Category().getList()
+        foodCategories = Category().getFoodCategories()
     }
 
     override func didReceiveMemoryWarning() {
@@ -40,10 +40,10 @@ class FiltersViewController: UIViewController, FiltersViewControllerDelegate {
         var selectedCategories = [String]()
         for (row, isSelected) in switchSates {
             if isSelected {
-                selectedCategories.append(categories[row]["alias"]!)
+                selectedCategories.append(foodCategories[row]["alias"]!)
             }
             if selectedCategories.count > 0 {
-                filters["categories"] = selectedCategories as AnyObject?
+                filters["foodCategories"] = selectedCategories as AnyObject?
             }
         }
         delegate?.filtersViewController?(filtersViewController: self, didUpdateFilters: filters)
@@ -53,12 +53,12 @@ class FiltersViewController: UIViewController, FiltersViewControllerDelegate {
 
 extension FiltersViewController: UITableViewDelegate, UITableViewDataSource, SwitchTableViewCellDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return foodCategories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchTableViewCell", for: indexPath) as! SwitchTableViewCell
-        cell.switchLabel.text = categories[indexPath.row]["title"]
+        cell.switchLabel.text = foodCategories[indexPath.row]["title"]
         cell.delegate = self
         
         cell.onSwitch.isOn = switchSates[indexPath.row] ?? false
