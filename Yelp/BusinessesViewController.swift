@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController {
+class BusinessesViewController: UIViewController, FiltersViewControllerDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     var businesses: [Business] = []
@@ -26,18 +26,23 @@ class BusinessesViewController: UIViewController {
                 }
             }
         )
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navigationController = segue.destination as! UINavigationController
+        let filtersViewController = navigationController.topViewController as! FiltersViewController
+        filtersViewController.delegate = self
+    }
+    
+    func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters fitlers: [String : AnyObject]) {
+        let categories = fitlers["categories"] as? [String]
         
-        /* Example of Yelp search with more search options specified
-         Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
-         self.businesses = businesses
-         
-         for business in businesses {
-         print(business.name!)
-         print(business.address!)
-         }
-         }
-         */
-        
+        Business.searchWithTerm(term: "Restaurant", sort: nil, categories: categories, deals: nil, completion: { (businesses: [Business]?, error: Error?) -> Void in
+            if let businesses = businesses {
+                self.businesses = businesses
+                self.tableView.reloadData()
+            }
+        })
     }
 }
 
