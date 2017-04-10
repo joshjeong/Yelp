@@ -17,6 +17,8 @@ let yelpConsumerSecret = "33QCvh5bIF5jIHR5klQr7RtBDhQ"
 let yelpToken = "uRcRswHFYa1VkDrGV6LAW2F8clGh5JHV"
 let yelpTokenSecret = "mqtKIxMIR4iBtBPZCmCLEb-Dz3Y"
 
+
+
 enum YelpSortMode: Int {
     case bestMatched = 0, distance, highestRated
 }
@@ -44,14 +46,16 @@ class YelpClient: BDBOAuth1RequestOperationManager {
     }
     
     func searchWithTerm(_ term: String, completion: @escaping ([Business]?, Error?) -> Void) -> AFHTTPRequestOperation {
-        return searchWithTerm(term, sort: nil, categories: nil, deals: nil, completion: completion)
+        return searchWithTerm(term, sort: nil, categories: nil, deals: nil, radius: nil, completion: completion)
     }
     
-    func searchWithTerm(_ term: String, sort: YelpSortMode?, categories: [String]?, deals: Bool?, completion: @escaping ([Business]?, Error?) -> Void) -> AFHTTPRequestOperation {
+    func searchWithTerm(_ term: String, sort: YelpSortMode?, categories: [String]?, deals: Bool?, radius: Int?, completion: @escaping ([Business]?, Error?) -> Void) -> AFHTTPRequestOperation {
         // For additional parameters, see http://www.yelp.com/developers/documentation/v2/search_api
         
         // Default the location to San Francisco
         var parameters: [String : AnyObject] = ["term": term as AnyObject, "ll": "37.785771,-122.406165" as AnyObject]
+        
+        
         
         if sort != nil {
             parameters["sort"] = sort!.rawValue as AnyObject?
@@ -63,6 +67,11 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         
         if deals != nil {
             parameters["deals_filter"] = deals! as AnyObject?
+        }
+        
+        if radius != nil {
+            let meters = Double(radius!) * 1609.34
+            parameters["radius_filter"] = meters as AnyObject?
         }
         
         return self.get("search", parameters: parameters,
