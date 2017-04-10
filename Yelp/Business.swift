@@ -8,6 +8,7 @@
 
 import UIKit
 import ObjectMapper
+import CoreLocation
 
 class Business: Mappable {
     var categories: [[String]]?
@@ -36,6 +37,7 @@ class Business: Mappable {
     var snippetImageURL: URL?
     var snippetText: String?
     var url: URL?
+    var locationCoordinates: Location?
     
     required init?(map: Map) {
         
@@ -67,6 +69,7 @@ class Business: Mappable {
         
         setCategoryString(categoriesArray: categories)
         setDistance(distanceMeters: distance)
+        setCoordinates(locationDic: location)
         setAddressString(locationDictionary: location)
     }
 
@@ -94,6 +97,17 @@ class Business: Mappable {
             distanceMiles = String(format: "%.2f mi", milesPerMeter * Double(distanceMeters))
         } else {
             distanceMiles = ""
+        }
+    }
+    
+    func setCoordinates(locationDic: NSDictionary?) {
+        var coordinates = locationDic?["coordinate"]! as! NSDictionary
+        if let coordinatesDic = locationDic?["coordinate"] as? NSDictionary {
+            var latitude = coordinatesDic["latitude"] as! Double
+            var longitude = coordinatesDic["longitude"] as! Double
+            if let title = name {
+                locationCoordinates = Location(title: title, latitude: latitude, longitude: longitude)
+            }
         }
     }
     

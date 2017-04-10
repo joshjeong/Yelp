@@ -13,6 +13,8 @@ import CoreLocation
 class BusinessesViewController: UIViewController, FiltersViewControllerDelegate, CLLocationManagerDelegate {
     
     @IBOutlet weak var tableView: UITableView!
+    
+    
     let searchBar = UISearchBar()
     let locationManager = CLLocationManager()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -20,7 +22,6 @@ class BusinessesViewController: UIViewController, FiltersViewControllerDelegate,
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 200
         createSearchBar()
@@ -54,10 +55,8 @@ class BusinessesViewController: UIViewController, FiltersViewControllerDelegate,
     }
     
     func createSearchBar() {
-        searchBar.showsCancelButton = false
         searchBar.placeholder = "Search..."
         searchBar.delegate = self
-        searchBar.showsCancelButton = true
         navigationItem.titleView = searchBar
     }
     
@@ -71,6 +70,7 @@ class BusinessesViewController: UIViewController, FiltersViewControllerDelegate,
     }
     
     func dismissKeyboard() {
+        searchBar.text = ""
         searchBar.endEditing(true)
     }
     
@@ -87,6 +87,20 @@ class BusinessesViewController: UIViewController, FiltersViewControllerDelegate,
         }
         searchBusiness(term: "Restaurant")
     }
+    
+    @IBAction func didTapMapButton(_ sender: UIBarButtonItem) {
+        var businessLocations = [Location]()
+        for business in businesses {
+            if let businessCoordinate = business.locationCoordinates {
+                businessLocations.append(businessCoordinate)
+            }
+        }
+        let vc = storyboard?.instantiateViewController(withIdentifier: "MapViewController") as! MapViewController
+        vc.businessLocations = businessLocations
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    
 }
 
 extension BusinessesViewController: UITableViewDelegate, UITableViewDataSource {
@@ -102,8 +116,8 @@ extension BusinessesViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        searchBar.text = ""
         dismissKeyboard()
+        
     }
 }
 
