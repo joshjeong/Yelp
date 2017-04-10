@@ -7,11 +7,15 @@
 //
 
 import UIKit
+import MapKit
+import CoreLocation
 
-class BusinessesViewController: UIViewController, FiltersViewControllerDelegate {
+class BusinessesViewController: UIViewController, FiltersViewControllerDelegate, CLLocationManagerDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     let searchBar = UISearchBar()
+    let locationManager = CLLocationManager()
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var businesses: [Business] = []
     
     override func viewDidLoad() {
@@ -20,9 +24,10 @@ class BusinessesViewController: UIViewController, FiltersViewControllerDelegate 
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 200
         createSearchBar()
-        
-        searchBusiness(term: "Restaurant")
+        requestLocationAuthorization()
+        getCurrentLocation()
     }
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let navigationController = segue.destination as! UINavigationController
@@ -67,6 +72,20 @@ class BusinessesViewController: UIViewController, FiltersViewControllerDelegate 
     
     func dismissKeyboard() {
         searchBar.endEditing(true)
+    }
+    
+    func requestLocationAuthorization() {
+        locationManager.requestWhenInUseAuthorization()
+    }
+    
+    func getCurrentLocation() {
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.startUpdatingLocation()
+            appDelegate.currentLocation = locationManager.location?.coordinate
+        }
+        searchBusiness(term: "Restaurant")
     }
 }
 

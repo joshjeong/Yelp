@@ -16,6 +16,7 @@ let yelpConsumerKey = "vxKwwcR_NMQ7WaEiQBK_CA"
 let yelpConsumerSecret = "33QCvh5bIF5jIHR5klQr7RtBDhQ"
 let yelpToken = "uRcRswHFYa1VkDrGV6LAW2F8clGh5JHV"
 let yelpTokenSecret = "mqtKIxMIR4iBtBPZCmCLEb-Dz3Y"
+let appDelegate = UIApplication.shared.delegate as! AppDelegate
 
 
 
@@ -53,9 +54,12 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         // For additional parameters, see http://www.yelp.com/developers/documentation/v2/search_api
         
         // Default the location to San Francisco
-        var parameters: [String : AnyObject] = ["term": term as AnyObject, "ll": "37.785771,-122.406165" as AnyObject]
+        var ll = "37.785771,-122.406165"
+        if let llCoord = appDelegate.currentLocation {
+            ll = "\(llCoord.latitude),\(llCoord.longitude)"
+        }
         
-        
+        var parameters: [String : AnyObject] = ["term": term as AnyObject, "ll": ll as AnyObject]
         
         if sort != nil {
             parameters["sort"] = sort!.rawValue as AnyObject?
